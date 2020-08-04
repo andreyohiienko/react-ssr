@@ -11,8 +11,9 @@ export const fetchUsers = () => async (dispatch, getState, api) => {
 export const FETCH_CURRENT_USER = 'FETCH_CURRENT_USER'
 export const fetchCurrentUser = () => async (dispatch, getState, api) => {
   const res = await api.get('/current_user')
+  // console.log('res', res)
 
-  dispacth({
+  dispatch({
     type: FETCH_CURRENT_USER,
     payload: res,
   })
