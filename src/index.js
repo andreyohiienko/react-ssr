@@ -21,11 +21,20 @@ app.use(express.static('public'))
 app.get('*', (req, res) => {
   const store = createStore(req)
 
-  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
-    return route.loadData ? route.loadData(store) : null
-  })
+  const promises = matchRoutes(Routes, req.path)
+    .map(({ route }) => {
+      return route.loadData ? route.loadData(store) : null
+    })
+    .map((promise) => {
+      // Create a promises that ALWAYS resolves
+      if (promise) {
+        return new Promise((resolve, reject) => {
+          promise.then(resolve).catch(resolve)
+        })
+      }
+    })
 
-  const render = () => {
+  Promise.all(promises).then(() => {
     const context = {}
     const content = renderer(req, store, context)
 
@@ -34,9 +43,7 @@ app.get('*', (req, res) => {
     }
 
     res.send(content)
-  }
-
-  Promise.all(promises).then(render).catch(render)
+  })
 })
 
 app.listen(3000, () => {
