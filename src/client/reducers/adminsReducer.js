@@ -5,6 +5,6 @@ export default (state = [], action) => {
     case FETCH_ADMINS:
       return action.payload.data
     default:
-      return data
+      return state
   }
 }
